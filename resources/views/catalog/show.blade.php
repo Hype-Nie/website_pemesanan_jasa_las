@@ -21,14 +21,14 @@
 
                 <!-- Product Info -->
                 <div class="col-lg-6">
-                    <span class="badge bg-primary mb-3 fs-6">{{ ucfirst($product->category) }}</span>
+                    <span class="badge bg-primary mb-3 fs-6">{{ $product->category->name ?? 'Uncategorized' }}</span>
                     <h2 class="text-uppercase mb-3">{{ $product->name }}</h2>
                     <p class="fs-5 mb-4">{{ $product->description }}</p>
 
                     <table class="table">
                         <tr>
                             <th width="40%"><i class="fas fa-tag me-2 text-primary"></i>Kategori</th>
-                            <td>{{ ucfirst($product->category) }}</td>
+                            <td>{{ $product->category->name ?? 'Uncategorized' }}</td>
                         </tr>
                         <tr>
                             <th><i class="fas fa-cubes me-2 text-primary"></i>Material</th>
