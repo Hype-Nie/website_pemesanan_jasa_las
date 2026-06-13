@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $inProductionOrders = CustomOrder::where('status', 'in_production')->count();
         $completedOrders = CustomOrder::where('status', 'completed')->count();
 
-        $revenue = Payment::where('status', 'verified')->sum('amount');
+        $totalRevenue = Payment::where('status', 'verified')->sum('amount');
 
         $recentOrders = CustomOrder::with('user')
             ->latest()
@@ -33,7 +33,7 @@ class DashboardController extends Controller
             'pendingOrders',
             'inProductionOrders',
             'completedOrders',
-            'revenue',
+            'totalRevenue',
             'recentOrders',
             'pendingPayments'
         ));
