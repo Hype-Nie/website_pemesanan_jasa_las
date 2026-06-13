@@ -109,10 +109,23 @@
         }
     </style>
 
+    <style>
+        /* AJAX progress bar */
+        #ajax-progress {
+            position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+            background: linear-gradient(90deg, #FD5D14, #ff8c5a);
+            z-index: 99999; transition: width 0.3s ease, opacity 0.3s ease; opacity: 0;
+        }
+        #ajax-progress.active { opacity: 1; }
+        #page-content { opacity: 1; transition: opacity 0.2s ease; }
+        #page-content.ajax-loading { opacity: 0; }
+    </style>
     @stack('styles')
 </head>
 
 <body>
+    <div id="ajax-progress"></div>
+
     <!-- Sidebar -->
     @include('components.admin.sidebar')
 
@@ -122,7 +135,7 @@
         @include('components.admin.topnav')
 
         <!-- Main Content -->
-        <div class="admin-main">
+        <div class="admin-main" id="page-content">
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
@@ -138,6 +151,9 @@
             @endif
 
             @yield('content')
+            
+            <!-- Scripts spesifik halaman ikut dimuat saat AJAX -->
+            @stack('scripts')
         </div>
     </div>
 
@@ -149,9 +165,105 @@
         document.getElementById('sidebarToggle')?.addEventListener('click', function() {
             document.querySelector('.admin-sidebar').classList.toggle('show');
         });
-    </script>
 
-    @stack('scripts')
+        // AJAX SPA Admin Navigation
+        (function ($) {
+            var $progress = $('#ajax-progress');
+            var $content = $('#page-content');
+            var isLoading = false;
+
+            function startProgress() {
+                $progress.stop(true).css({ width: '0%', opacity: 1 }).addClass('active').animate({ width: '75%' }, 400);
+            }
+            function finishProgress() {
+                $progress.animate({ width: '100%' }, 200, function () {
+                    $(this).fadeOut(200, function () { $(this).css('width', '0%').removeClass('active'); });
+                });
+            }
+
+            function updateNavActive(path) {
+                $('.admin-sidebar .nav-link').each(function () {
+                    var href = $(this).attr('href');
+                    if (!href) return;
+                    try {
+                        var linkPath = new URL(href, window.location.origin).pathname;
+                        if (path.startsWith(linkPath)) {
+                            $(this).addClass('active');
+                        } else {
+                            $(this).removeClass('active');
+                        }
+                    } catch (e) {}
+                });
+            }
+
+            function navigate(url, pushState) {
+                if (isLoading) return;
+                isLoading = true;
+                startProgress();
+                $content.addClass('ajax-loading');
+                var startTime = Date.now();
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (html) {
+                        var delay = Math.max(0, 200 - (Date.now() - startTime));
+                        setTimeout(function() {
+                            var parser = new DOMParser();
+                            var doc = parser.parseFromString(html, 'text/html');
+                            var newContent = doc.querySelector('#page-content');
+                            
+                            if (newContent) {
+                                // Extract scripts to execute them
+                                $content.html(newContent.innerHTML);
+                            }
+
+                            document.title = doc.title || document.title;
+                            if (pushState !== false) history.pushState({ url: url }, document.title, url);
+                            window.scrollTo({ top: 0, behavior: 'instant' });
+
+                            var path = new URL(url, window.location.origin).pathname;
+                            updateNavActive(path);
+
+                            finishProgress();
+                            $content.removeClass('ajax-loading');
+                            isLoading = false;
+                        }, delay);
+                    },
+                    error: function () {
+                        finishProgress();
+                        window.location.href = url;
+                    }
+                });
+            }
+
+            $(document).on('click', 'a.nav-link, a.btn', function (e) {
+                var $link = $(this);
+                var href = $link.attr('href');
+                if (!href || href === '#' || href.startsWith('#') || $link.attr('target') === '_blank' || $link.attr('download') !== undefined) return;
+                if ($link.closest('form').length) return;
+
+                var linkUrl;
+                try { linkUrl = new URL(href, window.location.href); } catch (err) { return; }
+                if (linkUrl.hostname !== window.location.hostname) return;
+                // Only intercept admin links
+                if (!linkUrl.pathname.startsWith('/admin')) return;
+                if (linkUrl.pathname === window.location.pathname && linkUrl.search === window.location.search) {
+                    e.preventDefault(); return;
+                }
+                e.preventDefault();
+                navigate(linkUrl.pathname + linkUrl.search);
+            });
+
+            $(window).on('popstate', function (e) {
+                var state = e.originalEvent.state;
+                if (state && state.url) navigate(state.url, false);
+            });
+
+            history.replaceState({ url: window.location.href }, document.title, window.location.href);
+            updateNavActive(window.location.pathname);
+        })(jQuery);
+    </script>
 </body>
 
 </html>

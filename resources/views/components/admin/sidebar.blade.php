@@ -16,6 +16,9 @@
         <a href="{{ route('admin.catalog.index') }}" class="nav-link {{ Request::is('admin/catalog*') ? 'active' : '' }}">
             <i class="fas fa-boxes"></i> Katalog Produk
         </a>
+        <a href="{{ route('admin.reports.index') }}" class="nav-link {{ Request::is('admin/reports*') ? 'active' : '' }}">
+            <i class="fas fa-chart-bar"></i> Laporan Transaksi
+        </a>
 
         <hr class="border-secondary mx-3">
 
