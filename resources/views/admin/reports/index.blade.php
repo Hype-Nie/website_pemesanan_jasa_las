@@ -19,34 +19,34 @@
 @section('content')
 
 {{-- ═══════════════════ FILTER CARD ═══════════════════ --}}
-<div class="date-range-card p-4 mb-4 text-white">
+<div class="card p-4 mb-4 shadow-sm border-0">
     <div class="d-flex flex-wrap align-items-end gap-3">
         <div>
-            <label class="form-label text-white-50 mb-1 small text-uppercase fw-bold">Dari Tanggal</label>
-            <input type="text" id="from_date" name="from" class="form-control"
+            <label class="form-label text-muted mb-1 small text-uppercase fw-bold">Dari Tanggal</label>
+            <input type="text" id="from_date" name="from" class="form-control bg-light"
                 value="{{ $from->format('Y-m-d') }}" placeholder="Dari..." style="min-width:160px;">
         </div>
         <div>
-            <label class="form-label text-white-50 mb-1 small text-uppercase fw-bold">Sampai Tanggal</label>
-            <input type="text" id="to_date" name="to" class="form-control"
+            <label class="form-label text-muted mb-1 small text-uppercase fw-bold">Sampai Tanggal</label>
+            <input type="text" id="to_date" name="to" class="form-control bg-light"
                 value="{{ $to->format('Y-m-d') }}" placeholder="Sampai..." style="min-width:160px;">
         </div>
-        <button id="btnFilter" class="btn btn-warning fw-bold px-4 export-btn">
+        <button id="btnFilter" class="btn btn-primary fw-bold px-4 export-btn">
             <i class="fas fa-search me-2"></i>Tampilkan
         </button>
         {{-- Quick presets --}}
         <div class="ms-auto d-flex flex-wrap gap-2">
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="today">Hari Ini</button>
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="this_week">Minggu Ini</button>
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="this_month">Bulan Ini</button>
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="last_month">Bulan Lalu</button>
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="this_year">Tahun Ini</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="today">Hari Ini</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="this_week">Minggu Ini</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="this_month">Bulan Ini</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="last_month">Bulan Lalu</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="this_year">Tahun Ini</button>
         </div>
     </div>
-    <div class="mt-3 pt-3 border-top border-secondary d-flex flex-wrap align-items-center gap-3">
-        <span class="text-white-50 small">
-            <i class="fas fa-calendar-alt me-1"></i>
-            Periode aktif: <strong class="text-white">{{ $from->format('d F Y') }}</strong> s.d. <strong class="text-white">{{ $to->format('d F Y') }}</strong>
+    <div class="mt-3 pt-3 border-top d-flex flex-wrap align-items-center gap-3">
+        <span class="text-muted small">
+            <i class="fas fa-calendar-alt me-1 text-primary"></i>
+            Periode aktif: <strong class="text-dark">{{ $from->format('d F Y') }}</strong> s.d. <strong class="text-dark">{{ $to->format('d F Y') }}</strong>
         </span>
         <div class="ms-auto d-flex gap-2">
             <a href="{{ route('admin.reports.export.csv', ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')]) }}"
