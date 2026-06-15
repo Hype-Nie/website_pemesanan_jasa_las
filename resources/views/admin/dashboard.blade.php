@@ -161,4 +161,64 @@
             </div>
         </div>
     </div>
+
+    <!-- Recent Payments -->
+    <div class="card stat-card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Pembayaran Terbaru</h5>
+            <a href="{{ route('admin.payments.index') }}" class="btn btn-sm btn-outline-info">Lihat Semua</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Kode Pesanan</th>
+                            <th>Pelanggan</th>
+                            <th>Jumlah</th>
+                            <th>Bank</th>
+                            <th>Status</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($recentPayments ?? [] as $payment)
+                            <tr>
+                                <td>
+                                    <a href="{{ route('admin.orders.show', $payment->customOrder->id ?? 0) }}" class="fw-bold text-primary text-decoration-none">
+                                        {{ $payment->customOrder->order_code ?? '-' }}
+                                    </a>
+                                </td>
+                                <td>{{ $payment->customOrder->user->name ?? '-' }}</td>
+                                <td class="fw-bold">Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
+                                <td>{{ $payment->bank_name }}</td>
+                                <td>
+                                    @php
+                                        $paymentStatusColors = [
+                                            'pending' => 'warning',
+                                            'verified' => 'success',
+                                            'rejected' => 'danger',
+                                        ];
+                                        $paymentStatusLabels = [
+                                            'pending' => 'Pending',
+                                            'verified' => 'Terverifikasi',
+                                            'rejected' => 'Ditolak',
+                                        ];
+                                    @endphp
+                                    <span class="badge bg-{{ $paymentStatusColors[$payment->status] ?? 'secondary' }}">
+                                        {{ $paymentStatusLabels[$payment->status] ?? $payment->status }}
+                                    </span>
+                                </td>
+                                <td>{{ $payment->created_at->format('d M Y, H:i') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">Belum ada pembayaran.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 @endsection

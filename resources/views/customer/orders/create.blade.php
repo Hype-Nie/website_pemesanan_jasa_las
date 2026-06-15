@@ -109,9 +109,9 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="reference_design" class="form-label fw-bold">Referensi Desain (opsional)</label>
+                                <label for="reference_design" class="form-label fw-bold">Referensi Desain <span class="text-danger">*</span></label>
                                 <input type="file" class="form-control @error('reference_design') is-invalid @enderror"
-                                    id="reference_design" name="reference_design" accept="image/*">
+                                    id="reference_design" name="reference_design" accept="image/*" required>
                                 <small class="text-muted">Upload gambar referensi desain yang diinginkan (JPG, PNG, max 2MB)</small>
                                 @error('reference_design')
                                     <div class="invalid-feedback">{{ $message }}</div>
