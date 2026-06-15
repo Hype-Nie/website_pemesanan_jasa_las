@@ -26,6 +26,11 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $recentPayments = Payment::with('customOrder.user')
+            ->latest()
+            ->take(5)
+            ->get();
+
         $pendingPayments = Payment::where('status', 'pending')->count();
 
         return view('admin.dashboard', compact(
@@ -35,6 +40,7 @@ class DashboardController extends Controller
             'completedOrders',
             'totalRevenue',
             'recentOrders',
+            'recentPayments',
             'pendingPayments'
         ));
     }

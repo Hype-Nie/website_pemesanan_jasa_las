@@ -52,7 +52,7 @@ class OrderController extends Controller
             'material_preference' => 'nullable|string|max:100',
             'quantity' => 'required|integer|min:1',
             'catalog_product_id' => 'nullable|exists:catalog_products,id',
-            'reference_design' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'reference_design' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         $data = [

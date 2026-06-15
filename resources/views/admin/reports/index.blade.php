@@ -4,9 +4,7 @@
 @section('page-title', 'Laporan Transaksi')
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
-    .flatpickr-input { background: #fff !important; cursor: pointer; }
     .date-range-card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; }
     .export-btn { transition: all .2s; }
     .export-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
@@ -19,34 +17,34 @@
 @section('content')
 
 {{-- ═══════════════════ FILTER CARD ═══════════════════ --}}
-<div class="date-range-card p-4 mb-4 text-white">
+<div class="card p-4 mb-4 shadow-sm border-0">
     <div class="d-flex flex-wrap align-items-end gap-3">
         <div>
-            <label class="form-label text-white-50 mb-1 small text-uppercase fw-bold">Dari Tanggal</label>
-            <input type="text" id="from_date" name="from" class="form-control"
-                value="{{ $from->format('Y-m-d') }}" placeholder="Dari..." style="min-width:160px;">
+            <label class="form-label text-muted mb-1 small text-uppercase fw-bold">Dari Tanggal</label>
+            <input type="date" id="from_date" name="from" class="form-control bg-light"
+                value="{{ $from->format('Y-m-d') }}" style="min-width:160px;">
         </div>
         <div>
-            <label class="form-label text-white-50 mb-1 small text-uppercase fw-bold">Sampai Tanggal</label>
-            <input type="text" id="to_date" name="to" class="form-control"
-                value="{{ $to->format('Y-m-d') }}" placeholder="Sampai..." style="min-width:160px;">
+            <label class="form-label text-muted mb-1 small text-uppercase fw-bold">Sampai Tanggal</label>
+            <input type="date" id="to_date" name="to" class="form-control bg-light"
+                value="{{ $to->format('Y-m-d') }}" style="min-width:160px;">
         </div>
-        <button id="btnFilter" class="btn btn-warning fw-bold px-4 export-btn">
+        <button id="btnFilter" class="btn btn-primary fw-bold px-4 export-btn">
             <i class="fas fa-search me-2"></i>Tampilkan
         </button>
         {{-- Quick presets --}}
         <div class="ms-auto d-flex flex-wrap gap-2">
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="today">Hari Ini</button>
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="this_week">Minggu Ini</button>
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="this_month">Bulan Ini</button>
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="last_month">Bulan Lalu</button>
-            <button class="btn btn-outline-light btn-sm preset-btn" data-preset="this_year">Tahun Ini</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="today">Hari Ini</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="this_week">Minggu Ini</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="this_month">Bulan Ini</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="last_month">Bulan Lalu</button>
+            <button class="btn btn-outline-secondary btn-sm preset-btn" data-preset="this_year">Tahun Ini</button>
         </div>
     </div>
-    <div class="mt-3 pt-3 border-top border-secondary d-flex flex-wrap align-items-center gap-3">
-        <span class="text-white-50 small">
-            <i class="fas fa-calendar-alt me-1"></i>
-            Periode aktif: <strong class="text-white">{{ $from->format('d F Y') }}</strong> s.d. <strong class="text-white">{{ $to->format('d F Y') }}</strong>
+    <div class="mt-3 pt-3 border-top d-flex flex-wrap align-items-center gap-3">
+        <span class="text-muted small">
+            <i class="fas fa-calendar-alt me-1 text-primary"></i>
+            Periode aktif: <strong class="text-dark">{{ $from->format('d F Y') }}</strong> s.d. <strong class="text-dark">{{ $to->format('d F Y') }}</strong>
         </span>
         <div class="ms-auto d-flex gap-2">
             <a href="{{ route('admin.reports.export.csv', ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')]) }}"
@@ -263,31 +261,7 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
 <script>
-    const fpFrom = flatpickr('#from_date', {
-        locale: 'id',
-        dateFormat: 'Y-m-d',
-        altInput: true,
-        altFormat: 'd F Y',
-        maxDate: 'today',
-        onChange: function(sel) {
-            fpTo.set('minDate', sel[0]);
-        }
-    });
-
-    const fpTo = flatpickr('#to_date', {
-        locale: 'id',
-        dateFormat: 'Y-m-d',
-        altInput: true,
-        altFormat: 'd F Y',
-        maxDate: 'today',
-        onChange: function(sel) {
-            fpFrom.set('maxDate', sel[0]);
-        }
-    });
-
     document.getElementById('btnFilter').addEventListener('click', function() {
         const from = document.getElementById('from_date').value;
         const to   = document.getElementById('to_date').value;
