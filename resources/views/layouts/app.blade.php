@@ -31,18 +31,11 @@
     <link href="{{ asset('weldork-css/style.css') }}?v={{ filemtime(public_path('weldork-css/style.css')) }}" rel="stylesheet">
 
     @stack('styles')
-    <style>
-        .transition-fade {
-            transition: 0.3s;
-            opacity: 1;
-        }
-        html.is-animating .transition-fade {
-            opacity: 0;
-        }
-    </style>
 </head>
 
 <body>
+    <!-- Spinner Start -->
+    @include('components.spinner')
     <!-- Spinner End -->
 
     <!-- Topbar Start -->
@@ -54,7 +47,7 @@
     <!-- Navbar End -->
 
     <!-- Content -->
-    <main id="swup" class="transition-fade">
+    <main id="page-content">
         @yield('content')
     </main>
 
@@ -76,33 +69,163 @@
 
     <!-- Template Javascript -->
     <script src="{{ asset('weldork-js/main.js') }}"></script>
-    <script src="https://unpkg.com/swup@4"></script>
+
+    <!-- AJAX SPA Navigation -->
     <script>
-        const swup = new Swup({
-            containers: ['#swup']
-        });
-        swup.hooks.on('page:view', () => {
-            if(typeof initApp === 'function') {
-                initApp();
+    (function ($) {
+        'use strict';
+
+        var $content   = $('#page-content');
+        var isLoading  = false;
+
+        /** Mulai progress bar bawaan template */
+        function startProgress() {
+            $('#spinner').addClass('show');
+        }
+
+        /** Selesaikan progress bar */
+        function finishProgress() {
+            // Main.js initApp() otomatis mematikan spinner, 
+            // tapi kita pastikan mati jika delay.
+            setTimeout(function () {
+                $('#spinner').removeClass('show');
+            }, 100);
+        }
+
+        /** Update state active navbar */
+        function updateNavActive(path) {
+            $('.navbar-nav .nav-link').each(function () {
+                var href = $(this).attr('href');
+                if (!href) return;
+                try {
+                    var linkPath = new URL(href, window.location.origin).pathname;
+                    if ((path === '/' && linkPath === '/') ||
+                        (path !== '/' && linkPath !== '/' && path.startsWith(linkPath))) {
+                        $(this).addClass('active');
+                    } else {
+                        $(this).removeClass('active');
+                    }
+                } catch (e) {}
+            });
+        }
+
+        /** Navigasi AJAX ke URL tertentu */
+        function navigate(url, pushState) {
+            if (isLoading) return;
+            isLoading = true;
+
+            startProgress();
+            var startTime = Date.now();
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (html) {
+                    var elapsed = Date.now() - startTime;
+                    // Pastikan minimal 250ms berlalu agar animasi fade-out CSS selesai sebelum HTML diganti
+                    var delay = Math.max(0, 250 - elapsed);
+
+                    setTimeout(function () {
+                        var parser = new DOMParser();
+                        var doc = parser.parseFromString(html, 'text/html');
+                        var newContent = doc.querySelector('#page-content');
+                        var newTitle = doc.title || document.title;
+
+                        if (newContent) {
+                            $content.html(newContent.innerHTML);
+                        }
+
+                        // Update title
+                        document.title = newTitle;
+
+                        // Update URL di address bar
+                        if (pushState !== false) {
+                            history.pushState({ url: url }, newTitle, url);
+                        }
+
+                        // Scroll ke atas dengan instant agar tidak bentrok dengan WOW.js
+                        window.scrollTo({ top: 0, behavior: 'instant' });
+
+                        // Update nav active state
+                        var path = new URL(url, window.location.origin).pathname;
+                        updateNavActive(path);
+
+                        // Re-init semua jQuery plugins
+                        if (typeof initApp === 'function') {
+                            initApp();
+                        }
+
+                        finishProgress();
+                        isLoading = false;
+                    }, delay);
+                },
+                error: function (xhr) {
+                    console.error("AJAX Error:", xhr);
+                    finishProgress();
+                    isLoading = false;
+                    window.location.href = url;
+                }
+            });
+        }
+
+        /** Intercept semua klik link internal */
+        $(document).on('click', 'a', function (e) {
+            var $link = $(this);
+            var href = $link.attr('href');
+
+            // Skip invalid, anchor, blank, download
+            if (!href || href === '#' || href.startsWith('#') ||
+                $link.attr('target') === '_blank' ||
+                $link.attr('download') !== undefined) {
+                return;
             }
 
-            // Update Navbar Active State
-            const currentPath = window.location.pathname;
-            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
-                link.classList.remove('active');
-                const href = link.getAttribute('href');
-                if(!href) return;
-                
-                try {
-                    const linkPath = new URL(href, window.location.origin).pathname;
-                    if (currentPath === '/' && linkPath === '/') {
-                        link.classList.add('active');
-                    } else if (currentPath !== '/' && linkPath !== '/' && currentPath.startsWith(linkPath)) {
-                        link.classList.add('active');
-                    }
-                } catch(e) {}
-            });
+            // Skip form submissions (like logout)
+            if ($link.closest('form').length) return;
+
+            var linkUrl;
+            try {
+                linkUrl = new URL(href, window.location.href);
+            } catch (err) {
+                return;
+            }
+
+            // Skip link eksternal (beda domain/host)
+            if (linkUrl.hostname !== window.location.hostname) {
+                return;
+            }
+
+            // Skip link ke admin panel dari frontend
+            if (linkUrl.pathname.startsWith('/admin')) {
+                return;
+            }
+
+            // Skip jika URL sama persis dengan halaman saat ini
+            if (linkUrl.pathname === window.location.pathname && linkUrl.search === window.location.search) {
+                e.preventDefault(); // cegah reload
+                return;
+            }
+
+            e.preventDefault();
+            // Gunakan path relative untuk AJAX agar terhindar dari isu CORS / Mixed Content HTTP vs HTTPS
+            var relativeUrl = linkUrl.pathname + linkUrl.search;
+            navigate(relativeUrl);
         });
+
+        /** Handle tombol Back / Forward browser */
+        $(window).on('popstate', function (e) {
+            var state = e.originalEvent.state;
+            var url = (state && state.url) ? state.url : window.location.href;
+            navigate(url, false);
+        });
+
+        // Simpan state halaman pertama
+        history.replaceState({ url: window.location.href }, document.title, window.location.href);
+
+        // Set active nav on first load
+        updateNavActive(window.location.pathname);
+
+    })(jQuery);
     </script>
 
     @stack('scripts')

@@ -86,6 +86,5 @@
     }
 
     $(document).ready(initApp);
-    document.addEventListener("turbo:load", initApp);
 })(jQuery);
 
