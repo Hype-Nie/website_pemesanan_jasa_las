@@ -112,7 +112,14 @@
                                 <label for="reference_design" class="form-label fw-bold">Referensi Desain <span class="text-danger">*</span></label>
                                 <input type="file" class="form-control @error('reference_design') is-invalid @enderror"
                                     id="reference_design" name="reference_design" accept="image/*" required>
-                                <small class="text-muted">Upload gambar referensi desain yang diinginkan (JPG, PNG, max 2MB)</small>
+                                <small class="text-muted d-block mb-2">Upload gambar referensi desain yang diinginkan (JPG, PNG, max 2MB)</small>
+                                
+                                <!-- Image Preview Container -->
+                                <div id="preview-container" class="mt-3" style="display: none;">
+                                    <h6 class="fw-bold">Preview:</h6>
+                                    <img id="image-preview" src="#" alt="Preview" class="img-fluid rounded border" style="max-height: 300px;">
+                                </div>
+
                                 @error('reference_design')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -129,3 +136,25 @@
     </div>
     <!-- Order Form End -->
 @endsection
+
+@push('scripts')
+<script>
+    document.getElementById('reference_design').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const previewContainer = document.getElementById('preview-container');
+        const imagePreview = document.getElementById('image-preview');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                previewContainer.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.src = '#';
+            previewContainer.style.display = 'none';
+        }
+    });
+</script>
+@endpush

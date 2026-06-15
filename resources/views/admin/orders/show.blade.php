@@ -92,10 +92,12 @@
                         </div>
                     </div>
 
-                    @if($order->reference_design)
+                    @if($order->reference_design_path)
                         <div class="mt-3">
                             <h6 class="fw-bold">Referensi Desain:</h6>
-                            <img class="img-fluid rounded border" src="{{ asset('storage/' . $order->reference_design) }}" alt="Referensi Desain" style="max-height: 400px;">
+                            <a href="{{ asset('storage/' . $order->reference_design_path) }}" target="_blank" title="Klik untuk memperbesar">
+                                <img class="img-fluid rounded border" src="{{ asset('storage/' . $order->reference_design_path) }}" alt="Referensi Desain" style="max-height: 400px; transition: 0.3s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
+                            </a>
                         </div>
                     @endif
 
