@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="d-flex justify-content-center gap-2">
                                     <a class="btn btn-light px-3" href="{{ route('catalog.show', $product->id) }}">Detail<i class="bi bi-chevron-double-right ms-1"></i></a>
-                                    <a class="btn btn-primary px-3" href="{{ route('customer.orders.create', ['product_id' => $product->id]) }}">Pesan</a>
+                                    <a class="btn btn-primary px-3" href="{{ route('customer.orders.create', $product->id) }}">Pesan</a>
                                 </div>
                             </div>
                         </div>
