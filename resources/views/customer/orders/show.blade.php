@@ -83,31 +83,47 @@
                         </div>
                         <div class="card-body">
                             @forelse($order->payments ?? [] as $payment)
-                                <div class="d-flex justify-content-between align-items-center border-bottom py-3">
-                                    <div>
-                                        <strong>Rp {{ number_format($payment->amount, 0, ',', '.') }}</strong>
-                                        <br>
-                                        <small class="text-muted">{{ $payment->bank_name }} - {{ $payment->account_name }}</small>
-                                        <br>
-                                        <small class="text-muted">{{ $payment->created_at->format('d M Y, H:i') }}</small>
+                                <div class="border-bottom py-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong>Rp {{ number_format($payment->amount, 0, ',', '.') }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ $payment->bank_name }} - {{ $payment->account_name }}</small>
+                                            <br>
+                                            <small class="text-muted">{{ $payment->created_at->format('d M Y, H:i') }}</small>
+                                            
+                                            @if($payment->proof_image_path)
+                                                <div class="mt-2">
+                                                    <a href="{{ asset('storage/' . $payment->proof_image_path) }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-image me-1"></i>Lihat Bukti
+                                                    </a>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="text-end">
+                                            @php
+                                                $paymentStatusColors = [
+                                                    'pending' => 'warning',
+                                                    'verified' => 'success',
+                                                    'rejected' => 'danger',
+                                                ];
+                                                $paymentStatusLabels = [
+                                                    'pending' => 'Menunggu Verifikasi',
+                                                    'verified' => 'Terverifikasi',
+                                                    'rejected' => 'Ditolak',
+                                                ];
+                                            @endphp
+                                            <span class="badge bg-{{ $paymentStatusColors[$payment->status] ?? 'secondary' }}">
+                                                {{ $paymentStatusLabels[$payment->status] ?? $payment->status }}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        @php
-                                            $paymentStatusColors = [
-                                                'pending' => 'warning',
-                                                'verified' => 'success',
-                                                'rejected' => 'danger',
-                                            ];
-                                            $paymentStatusLabels = [
-                                                'pending' => 'Menunggu Verifikasi',
-                                                'verified' => 'Terverifikasi',
-                                                'rejected' => 'Ditolak',
-                                            ];
-                                        @endphp
-                                        <span class="badge bg-{{ $paymentStatusColors[$payment->status] ?? 'secondary' }}">
-                                            {{ $paymentStatusLabels[$payment->status] ?? $payment->status }}
-                                        </span>
-                                    </div>
+                                    
+                                    @if($payment->status === 'rejected' && $payment->admin_notes)
+                                        <div class="alert alert-danger mt-3 mb-0 py-2 px-3">
+                                            <strong><i class="fas fa-exclamation-circle me-1"></i>Alasan Penolakan:</strong> {{ $payment->admin_notes }}
+                                        </div>
+                                    @endif
                                 </div>
                             @empty
                                 <p class="text-muted text-center py-3 mb-0">Belum ada pembayaran.</p>
