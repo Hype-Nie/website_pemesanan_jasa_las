@@ -38,9 +38,24 @@
                                 <td>{{ $payment->account_name }}</td>
                                 <td>
                                     @if($payment->proof_image_path)
-                                        <a href="{{ asset('storage/' . $payment->proof_image_path) }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#imageModal{{ $payment->id }}">
                                             <i class="fas fa-image me-1"></i>Lihat Bukti
-                                        </a>
+                                        </button>
+
+                                        <!-- Modal Bukti Pembayaran -->
+                                        <div class="modal fade" id="imageModal{{ $payment->id }}" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                <div class="modal-content border-0 shadow-lg">
+                                                    <div class="modal-header border-0 pb-0">
+                                                        <h5 class="modal-title text-muted fw-bold fs-6">Bukti Pembayaran</h5>
+                                                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center pt-2 pb-4">
+                                                        <img src="{{ asset('storage/' . $payment->proof_image_path) }}" class="img-fluid rounded" alt="Bukti Pembayaran" style="max-height: 80vh;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif

@@ -12,11 +12,32 @@
             <div class="row g-5 wow fadeInUp" data-wow-delay="0.1s">
                 <!-- Product Image -->
                 <div class="col-lg-6">
-                    @if($product->image_path)
-                        <img class="img-fluid w-100" src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}">
-                    @else
-                        <img class="img-fluid w-100" src="{{ asset('img/service-1.jpg') }}" alt="{{ $product->name }}">
-                    @endif
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal{{ $product->id }}">
+                        @if($product->image_path)
+                            <img class="img-fluid w-100 rounded" src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" style="cursor: zoom-in;">
+                        @else
+                            <img class="img-fluid w-100 rounded" src="{{ asset('img/service-1.jpg') }}" alt="{{ $product->name }}" style="cursor: zoom-in;">
+                        @endif
+                    </a>
+
+                    <!-- Modal Preview -->
+                    <div class="modal fade" id="imageModal{{ $product->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header border-0 pb-0">
+                                    <h5 class="modal-title text-muted fw-bold fs-6">{{ $product->name }}</h5>
+                                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center pt-2 pb-4">
+                                    @if($product->image_path)
+                                        <img class="img-fluid rounded" src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" style="max-height: 80vh;">
+                                    @else
+                                        <img class="img-fluid rounded" src="{{ asset('img/service-1.jpg') }}" alt="{{ $product->name }}" style="max-height: 80vh;">
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Product Info -->

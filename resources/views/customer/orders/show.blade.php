@@ -61,9 +61,24 @@
                             @if($order->reference_design_path)
                                 <div class="mt-3">
                                     <h6 class="fw-bold">Referensi Desain:</h6>
-                                    <a href="{{ asset('storage/' . $order->reference_design_path) }}" target="_blank" title="Klik untuk memperbesar">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#designModal" title="Klik untuk memperbesar">
                                         <img class="img-fluid rounded border" src="{{ asset('storage/' . $order->reference_design_path) }}" alt="Referensi Desain" style="max-height: 300px; transition: 0.3s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
                                     </a>
+
+                                    <!-- Modal Referensi Desain -->
+                                    <div class="modal fade" id="designModal" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content border-0 shadow-lg">
+                                                <div class="modal-header border-0 pb-0">
+                                                    <h5 class="modal-title text-muted fw-bold fs-6">Referensi Desain</h5>
+                                                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center pt-2 pb-4">
+                                                    <img src="{{ asset('storage/' . $order->reference_design_path) }}" class="img-fluid rounded" alt="Referensi Desain" style="max-height: 80vh;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             @endif
 
@@ -83,31 +98,62 @@
                         </div>
                         <div class="card-body">
                             @forelse($order->payments ?? [] as $payment)
-                                <div class="d-flex justify-content-between align-items-center border-bottom py-3">
-                                    <div>
-                                        <strong>Rp {{ number_format($payment->amount, 0, ',', '.') }}</strong>
-                                        <br>
-                                        <small class="text-muted">{{ $payment->bank_name }} - {{ $payment->account_name }}</small>
-                                        <br>
-                                        <small class="text-muted">{{ $payment->created_at->format('d M Y, H:i') }}</small>
+                                <div class="border-bottom py-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong>Rp {{ number_format($payment->amount, 0, ',', '.') }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ $payment->bank_name }} - {{ $payment->account_name }}</small>
+                                            <br>
+                                            <small class="text-muted">{{ $payment->created_at->format('d M Y, H:i') }}</small>
+                                            
+                                            @if($payment->proof_image_path)
+                                                <div class="mt-2">
+                                                    <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#imageModal{{ $payment->id }}">
+                                                        <i class="fas fa-image me-1"></i>Lihat Bukti
+                                                    </button>
+
+                                                    <!-- Modal Bukti Pembayaran -->
+                                                    <div class="modal fade" id="imageModal{{ $payment->id }}" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                            <div class="modal-content border-0 shadow-lg">
+                                                                <div class="modal-header border-0 pb-0">
+                                                                    <h5 class="modal-title text-muted fw-bold fs-6">Bukti Pembayaran</h5>
+                                                                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body text-center pt-2 pb-4">
+                                                                    <img src="{{ asset('storage/' . $payment->proof_image_path) }}" class="img-fluid rounded" alt="Bukti Pembayaran" style="max-height: 80vh;">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="text-end">
+                                            @php
+                                                $paymentStatusColors = [
+                                                    'pending' => 'warning',
+                                                    'verified' => 'success',
+                                                    'rejected' => 'danger',
+                                                ];
+                                                $paymentStatusLabels = [
+                                                    'pending' => 'Menunggu Verifikasi',
+                                                    'verified' => 'Terverifikasi',
+                                                    'rejected' => 'Ditolak',
+                                                ];
+                                            @endphp
+                                            <span class="badge bg-{{ $paymentStatusColors[$payment->status] ?? 'secondary' }}">
+                                                {{ $paymentStatusLabels[$payment->status] ?? $payment->status }}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        @php
-                                            $paymentStatusColors = [
-                                                'pending' => 'warning',
-                                                'verified' => 'success',
-                                                'rejected' => 'danger',
-                                            ];
-                                            $paymentStatusLabels = [
-                                                'pending' => 'Menunggu Verifikasi',
-                                                'verified' => 'Terverifikasi',
-                                                'rejected' => 'Ditolak',
-                                            ];
-                                        @endphp
-                                        <span class="badge bg-{{ $paymentStatusColors[$payment->status] ?? 'secondary' }}">
-                                            {{ $paymentStatusLabels[$payment->status] ?? $payment->status }}
-                                        </span>
-                                    </div>
+                                    
+                                    @if($payment->status === 'rejected' && $payment->admin_notes)
+                                        <div class="alert alert-danger mt-3 mb-0 py-2 px-3">
+                                            <strong><i class="fas fa-exclamation-circle me-1"></i>Alasan Penolakan:</strong> {{ $payment->admin_notes }}
+                                        </div>
+                                    @endif
                                 </div>
                             @empty
                                 <p class="text-muted text-center py-3 mb-0">Belum ada pembayaran.</p>

@@ -22,7 +22,7 @@
 
         <hr class="border-secondary mx-3">
 
-        <a href="{{ route('home') }}" class="nav-link" target="_blank">
+        <a href="{{ route('home') }}" class="nav-link">
             <i class="fas fa-external-link-alt"></i> Lihat Website
         </a>
     </nav>
