@@ -48,7 +48,7 @@
         </span>
         <div class="ms-auto d-flex gap-2">
             <a href="{{ route('admin.reports.export.csv', ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')]) }}"
-               class="btn btn-success btn-sm export-btn fw-semibold">
+               class="btn btn-success btn-sm export-btn fw-semibold" target="_blank">
                 <i class="fas fa-file-csv me-2"></i>Export CSV
             </a>
             <a href="{{ route('admin.reports.export.pdf', ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')]) }}"

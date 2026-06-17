@@ -11,7 +11,7 @@
                 <div class="ms-3 d-flex">
                     <a class="btn btn-sm-square btn-light text-primary ms-2" href="#"><i class="fab fa-facebook-f"></i></a>
                     <a class="btn btn-sm-square btn-light text-primary ms-2" href="#"><i class="fab fa-instagram"></i></a>
-                    <a class="btn btn-sm-square btn-light text-primary ms-2" href="https://wa.me/62812XXXXXXXX" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    <a class="btn btn-sm-square btn-light text-primary ms-2" href="https://wa.me/62812XXXXXXXX"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
         </div>

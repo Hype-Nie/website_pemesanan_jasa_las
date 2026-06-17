@@ -38,9 +38,27 @@
                                 <td>{{ $payment->account_name }}</td>
                                 <td>
                                     @if($payment->proof_image_path)
-                                        <a href="{{ asset('storage/' . $payment->proof_image_path) }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#imageModal{{ $payment->id }}">
                                             <i class="fas fa-image me-1"></i>Lihat Bukti
-                                        </a>
+                                        </button>
+
+                                        <!-- Modal Bukti Pembayaran -->
+                                        <div class="modal fade" id="imageModal{{ $payment->id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ $payment->id }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered text-start">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="imageModalLabel{{ $payment->id }}">Bukti Pembayaran</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <img src="{{ asset('storage/' . $payment->proof_image_path) }}" class="img-fluid" alt="Bukti Pembayaran">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif

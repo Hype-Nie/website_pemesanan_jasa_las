@@ -10,7 +10,7 @@
                 <div class="d-flex pt-3">
                     <a class="btn btn-square btn-light me-2" href="#"><i class="fab fa-facebook-f"></i></a>
                     <a class="btn btn-square btn-light me-2" href="#"><i class="fab fa-instagram"></i></a>
-                    <a class="btn btn-square btn-light me-2" href="https://wa.me/62812XXXXXXXX" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    <a class="btn btn-square btn-light me-2" href="https://wa.me/62812XXXXXXXX"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">

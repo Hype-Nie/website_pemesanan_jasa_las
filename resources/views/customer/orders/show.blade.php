@@ -61,9 +61,27 @@
                             @if($order->reference_design_path)
                                 <div class="mt-3">
                                     <h6 class="fw-bold">Referensi Desain:</h6>
-                                    <a href="{{ asset('storage/' . $order->reference_design_path) }}" target="_blank" title="Klik untuk memperbesar">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#designModal" title="Klik untuk memperbesar">
                                         <img class="img-fluid rounded border" src="{{ asset('storage/' . $order->reference_design_path) }}" alt="Referensi Desain" style="max-height: 300px; transition: 0.3s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
                                     </a>
+
+                                    <!-- Modal Referensi Desain -->
+                                    <div class="modal fade" id="designModal" tabindex="-1" aria-labelledby="designModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="designModalLabel">Referensi Desain</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ asset('storage/' . $order->reference_design_path) }}" class="img-fluid" alt="Referensi Desain">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             @endif
 
@@ -94,9 +112,27 @@
                                             
                                             @if($payment->proof_image_path)
                                                 <div class="mt-2">
-                                                    <a href="{{ asset('storage/' . $payment->proof_image_path) }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                                    <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#imageModal{{ $payment->id }}">
                                                         <i class="fas fa-image me-1"></i>Lihat Bukti
-                                                    </a>
+                                                    </button>
+
+                                                    <!-- Modal Bukti Pembayaran -->
+                                                    <div class="modal fade" id="imageModal{{ $payment->id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ $payment->id }}" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg modal-dialog-centered text-start">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="imageModalLabel{{ $payment->id }}">Bukti Pembayaran</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body text-center">
+                                                                    <img src="{{ asset('storage/' . $payment->proof_image_path) }}" class="img-fluid" alt="Bukti Pembayaran">
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </div>
