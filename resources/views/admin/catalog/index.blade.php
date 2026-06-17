@@ -30,8 +30,25 @@
                             <tr>
                                 <td>
                                     @if($product->image_path)
-                                        <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}"
-                                            class="img-fluid rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal{{ $product->id }}">
+                                            <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}"
+                                                class="img-fluid rounded" style="width: 60px; height: 60px; object-fit: cover; cursor: zoom-in;">
+                                        </a>
+
+                                        <!-- Modal Preview -->
+                                        <div class="modal fade" id="imageModal{{ $product->id }}" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                <div class="modal-content border-0 shadow-lg">
+                                                    <div class="modal-header border-0 pb-0">
+                                                        <h5 class="modal-title text-muted fw-bold fs-6">{{ $product->name }}</h5>
+                                                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center pt-2 pb-4">
+                                                        <img src="{{ asset('storage/' . $product->image_path) }}" class="img-fluid rounded" alt="{{ $product->name }}" style="max-height: 80vh;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @else
                                         <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                                             <i class="fas fa-image text-muted"></i>

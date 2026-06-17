@@ -43,18 +43,15 @@
                                         </button>
 
                                         <!-- Modal Bukti Pembayaran -->
-                                        <div class="modal fade" id="imageModal{{ $payment->id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ $payment->id }}" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg modal-dialog-centered text-start">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="imageModalLabel{{ $payment->id }}">Bukti Pembayaran</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <div class="modal fade" id="imageModal{{ $payment->id }}" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                <div class="modal-content border-0 shadow-lg">
+                                                    <div class="modal-header border-0 pb-0">
+                                                        <h5 class="modal-title text-muted fw-bold fs-6">Bukti Pembayaran</h5>
+                                                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
-                                                    <div class="modal-body text-center">
-                                                        <img src="{{ asset('storage/' . $payment->proof_image_path) }}" class="img-fluid" alt="Bukti Pembayaran">
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                    <div class="modal-body text-center pt-2 pb-4">
+                                                        <img src="{{ asset('storage/' . $payment->proof_image_path) }}" class="img-fluid rounded" alt="Bukti Pembayaran" style="max-height: 80vh;">
                                                     </div>
                                                 </div>
                                             </div>

@@ -71,9 +71,26 @@
                             <label for="image" class="form-label fw-bold">Gambar Produk</label>
                             @if($product->image_path)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}"
-                                        class="img-fluid rounded border" style="max-height: 200px;">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal">
+                                        <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}"
+                                            class="img-fluid rounded border" style="max-height: 200px; cursor: zoom-in;">
+                                    </a>
                                     <p class="small text-muted mt-1">Gambar saat ini. Upload gambar baru untuk mengganti.</p>
+                                </div>
+
+                                <!-- Modal Preview -->
+                                <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content border-0 shadow-lg">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h5 class="modal-title text-muted fw-bold fs-6">Preview Gambar Saat Ini</h5>
+                                                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-center pt-2 pb-4">
+                                                <img src="{{ asset('storage/' . $product->image_path) }}" class="img-fluid rounded" alt="{{ $product->name }}" style="max-height: 80vh;">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             @endif
                             <input type="file" class="form-control @error('image') is-invalid @enderror"
