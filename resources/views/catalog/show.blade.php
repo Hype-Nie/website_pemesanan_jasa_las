@@ -64,7 +64,7 @@
                     <p class="text-muted small"><i class="fas fa-info-circle me-1"></i>Harga di atas adalah estimasi. Harga final akan dikonfirmasi setelah survey dan konsultasi.</p>
 
                     <div class="mt-4">
-                        <a href="{{ route('customer.orders.create', ['product_id' => $product->id]) }}" class="btn btn-primary py-3 px-5">
+                        <a href="{{ route('customer.orders.create', $product->id) }}" class="btn btn-primary py-3 px-5">
                             <i class="fas fa-clipboard-list me-2"></i>Pesan Produk Ini
                         </a>
                         <a href="{{ route('catalog.index') }}" class="btn btn-outline-primary py-3 px-4 ms-2">

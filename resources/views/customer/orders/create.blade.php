@@ -19,23 +19,23 @@
                         </div>
                     @endif
 
-                    {{-- Product info card if product_id passed --}}
-                    @if(isset($product))
+                    {{-- Product info card if catalog product is selected --}}
+                    @if(isset($catalogProduct))
                         <div class="card border-primary mb-4">
                             <div class="card-body">
                                 <div class="row align-items-center">
                                     <div class="col-md-3">
-                                        @if($product->image)
-                                            <img class="img-fluid" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                                        @if($catalogProduct->image_path)
+                                            <img class="img-fluid" src="{{ asset('storage/' . $catalogProduct->image_path) }}" alt="{{ $catalogProduct->name }}">
                                         @else
-                                            <img class="img-fluid" src="{{ asset('img/service-1.jpg') }}" alt="{{ $product->name }}">
+                                            <img class="img-fluid" src="{{ asset('img/service-1.jpg') }}" alt="{{ $catalogProduct->name }}">
                                         @endif
                                     </div>
                                     <div class="col-md-9">
-                                        <h5 class="text-uppercase">{{ $product->name }}</h5>
-                                        <span class="badge bg-primary">{{ ucfirst($product->category) }}</span>
-                                        <p class="mt-2 mb-1">{{ Str::limit($product->description, 100) }}</p>
-                                        <p class="text-primary fw-bold">Estimasi: Rp {{ number_format($product->price_estimate, 0, ',', '.') }}</p>
+                                        <h5 class="text-uppercase">{{ $catalogProduct->name }}</h5>
+                                        <span class="badge bg-primary">{{ $catalogProduct->category->name ?? 'Uncategorized' }}</span>
+                                        <p class="mt-2 mb-1">{{ Str::limit($catalogProduct->description, 100) }}</p>
+                                        <p class="text-primary fw-bold">Estimasi: Rp {{ number_format($catalogProduct->price_estimate, 0, ',', '.') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -48,14 +48,14 @@
                         <form method="POST" action="{{ route('customer.orders.store') }}" enctype="multipart/form-data">
                             @csrf
 
-                            @if(isset($product))
-                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            @if(isset($catalogProduct))
+                                <input type="hidden" name="catalog_product_id" value="{{ $catalogProduct->id }}">
                             @endif
 
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control border-0 @error('product_name') is-invalid @enderror"
                                     id="product_name" name="product_name"
-                                    value="{{ old('product_name', isset($product) ? $product->name : '') }}"
+                                    value="{{ old('product_name', isset($catalogProduct) ? $catalogProduct->name : '') }}"
                                     placeholder="Nama Produk" required>
                                 <label for="product_name">Nama Produk / Jenis Pekerjaan</label>
                                 @error('product_name')
