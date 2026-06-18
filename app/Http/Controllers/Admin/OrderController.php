@@ -59,6 +59,14 @@ class OrderController extends Controller
             'total_price' => 'nullable|numeric|min:0',
         ]);
 
+        if ($validated['status'] === 'in_production') {
+            $hasVerifiedPayment = $order->payments()->where('status', 'verified')->exists();
+            
+            if (!$hasVerifiedPayment) {
+                return back()->with('error', 'Status tidak dapat diubah ke "Dalam Pengerjaan" karena belum ada bukti pembayaran yang disetujui.');
+            }
+        }
+
         $order->update([
             'status' => $validated['status'],
             'admin_notes' => isset($validated['admin_notes']) ? strip_tags($validated['admin_notes']) : $order->admin_notes,
