@@ -25,13 +25,81 @@
     <link href="{{ asset('lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="{{ asset('weldork-css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('weldork-css/bootstrap.min.css') }}?v={{ time() }}" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="{{ asset('weldork-css/style.css') }}?v={{ filemtime(public_path('weldork-css/style.css')) }}" rel="stylesheet">
+    <link href="{{ asset('weldork-css/style.css') }}?v={{ time() }}" rel="stylesheet">
 
     @stack('styles')
+
+        <style>
+        /* Paksaan warna text pada tombol utama dan efek hover */
+        .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-check:checked+.btn-primary {
+            color: #ffffff !important;
+        }
+        .btn-secondary, .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-check:checked+.btn-secondary {
+            color: #000000 !important;
+        }
+        .btn-outline-primary:hover, .btn-outline-primary:active, .btn-check:checked+.btn-outline-primary {
+            color: #ffffff !important;
+        }
+        .btn-outline-secondary:hover, .btn-outline-secondary:active, .btn-check:checked+.btn-outline-secondary {
+            color: #000000 !important;
+        }
+
+        /* Fix Form input (Admin/Dashboard) supaya text tidak kuning */
+        .form-control, .form-select, .form-control:focus, .form-select:focus {
+            color: #1b1b18 !important;
+        }
+
+        /* Paksaan agar saat item di-hover, text di dalamnya jadi putih (untuk service-item dll) */
+        .service .service-item:hover h1, .service .service-item:hover h2, .service .service-item:hover h3, 
+        .service .service-item:hover h4, .service .service-item:hover h5, .service .service-item:hover h6, 
+        .service .service-item:hover p, .service .service-item:hover span, .service .service-item:hover div, 
+        .service .service-item:hover a:not(.btn-light):not(.bg-primary) {
+            color: #ffffff !important;
+        }
+        .service .service-item:hover .bg-primary, .service .service-item:hover .bg-primary i {
+            background-color: #ffffff !important;
+            color: #1B2538 !important;
+        }
+
+        /* Fix Footer hover links supaya terlihat di background gelap */
+        .footer .btn.btn-link:hover, .copyright a:hover, .footer a:hover {
+            color: #FACC15 !important;
+            letter-spacing: 1px;
+        }
+        
+        /* Fix Footer text abu-abu agar lebih terang dan terbaca */
+        .footer p, .footer span, .footer div, .copyright {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        /* Active tab indicator di Navbar supaya jelas berada di mana */
+        .navbar-light .navbar-nav .nav-link {
+            position: relative;
+        }
+        .navbar-light .navbar-nav .nav-link.active,
+        .navbar-light .navbar-nav .nav-link:hover {
+            color: #FACC15 !important;
+            font-weight: 700 !important;
+            text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);
+        }
+        .navbar-light .navbar-nav .nav-link.active::after,
+        .navbar-light .navbar-nav .nav-link:hover::after {
+            content: '';
+            display: block;
+            width: 80%;
+            height: 3px;
+            background-color: #FACC15;
+            position: absolute;
+            bottom: 0px;
+            left: 10%;
+            border-radius: 2px;
+        }
+    </style>
 </head>
+
 
 <body>
     <!-- Spinner Start -->
