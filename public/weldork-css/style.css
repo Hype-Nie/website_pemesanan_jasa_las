@@ -1,3 +1,10 @@
+:root {
+    --bs-primary: #1B2538;
+    --bs-secondary: #FACC15;
+    --bs-primary-rgb: 27, 37, 56;
+    --bs-secondary-rgb: 250, 204, 21;
+}
+
 /********** Template CSS **********/
 
 .back-to-top {

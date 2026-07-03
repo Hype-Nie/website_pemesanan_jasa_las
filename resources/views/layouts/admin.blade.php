@@ -18,7 +18,51 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
 
-    <link href="{{ asset('weldork-css/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        /* Paksaan warna text pada tombol utama dan efek hover */
+        .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-check:checked+.btn-primary {
+            color: #ffffff !important;
+        }
+        .btn-secondary, .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-check:checked+.btn-secondary {
+            color: #000000 !important;
+        }
+        .btn-outline-primary:hover, .btn-outline-primary:active, .btn-check:checked+.btn-outline-primary {
+            color: #ffffff !important;
+        }
+        .btn-outline-secondary:hover, .btn-outline-secondary:active, .btn-check:checked+.btn-outline-secondary {
+            color: #000000 !important;
+        }
+
+        /* Fix Form input (Admin/Dashboard) supaya text tidak kuning */
+        .form-control, .form-select, .form-control:focus, .form-select:focus {
+            color: #495057 !important;
+        }
+
+        /* Active tab indicator di Navbar supaya jelas berada di mana */
+        .navbar-light .navbar-nav .nav-link {
+            position: relative;
+        }
+        .navbar-light .navbar-nav .nav-link.active,
+        .navbar-light .navbar-nav .nav-link:hover {
+            color: #FACC15 !important;
+            font-weight: 700 !important;
+            text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);
+        }
+        .navbar-light .navbar-nav .nav-link.active::after,
+        .navbar-light .navbar-nav .nav-link:hover::after {
+            content: '';
+            display: block;
+            width: 80%;
+            height: 3px;
+            background-color: #FACC15;
+            position: absolute;
+            bottom: 0px;
+            left: 10%;
+            border-radius: 2px;
+        }
+    </style>
+
+    <link href="{{ asset('weldork-css/bootstrap.min.css') }}?v={{ filemtime(public_path('weldork-css/bootstrap.min.css')) }}" rel="stylesheet">
 
     <style>
         body {
