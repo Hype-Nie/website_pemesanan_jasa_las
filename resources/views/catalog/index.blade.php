@@ -33,24 +33,7 @@
                                     @endif
                                 </a>
 
-                                <!-- Modal Preview -->
-                                <div class="modal fade" id="imageModal{{ $product->id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                                        <div class="modal-content border-0 shadow-lg">
-                                            <div class="modal-header border-0 pb-0">
-                                                <h5 class="modal-title text-muted fw-bold fs-6">{{ $product->name }}</h5>
-                                                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body text-center pt-2 pb-4">
-                                                @if($product->image_path)
-                                                    <img class="img-fluid rounded" src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" style="max-height: 80vh;">
-                                                @else
-                                                    <img class="img-fluid rounded" src="{{ asset('img/service-' . (($index % 8) + 1) . '.jpg') }}" alt="{{ $product->name }}" style="max-height: 80vh;">
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
                                 <div class="service-text px-5 pt-4">
                                     <span class="badge bg-primary mb-2">{{ $product->category->name ?? 'Uncategorized' }}</span>
                                     <h5 class="text-uppercase">{{ $product->name }}</h5>
@@ -73,6 +56,26 @@
                     </div>
                 @endforelse
             </div>
+
+            @foreach($products ?? [] as $index => $product)
+                <div class="modal fade" id="imageModal{{ $product->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg">
+                            <div class="modal-header border-0 pb-0">
+                                <h5 class="modal-title text-muted fw-bold fs-6">{{ $product->name }}</h5>
+                                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center pt-2 pb-4">
+                                @if($product->image_path)
+                                    <img class="img-fluid rounded" src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" style="max-height: 80vh;">
+                                @else
+                                    <img class="img-fluid rounded" src="{{ asset('img/service-' . (($index % 8) + 1) . '.jpg') }}" alt="{{ $product->name }}" style="max-height: 80vh;">
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
 
             <!-- Pagination -->
             @if(isset($products) && $products instanceof \Illuminate\Pagination\LengthAwarePaginator)
