@@ -1,6 +1,9 @@
 <div class="admin-sidebar">
     <div class="sidebar-brand">
-        <h4><i class="fas fa-fire me-2"></i>BENGKEL ASYRAF</h4>
+        <div class="d-flex align-items-center mb-1">
+            <img src="{{ asset('img/logo.jpeg') }}" alt="Logo Bengkel Asyraf" style="height: 32px; width: 32px; object-fit: cover; border-radius: 5px;" class="me-2">
+            <h4 class="mb-0 text-white fw-bold" style="font-size: 1.1rem;">BENGKEL ASYRAF</h4>
+        </div>
         <small class="text-muted">Panel Admin</small>
     </div>
     <nav class="mt-3">
