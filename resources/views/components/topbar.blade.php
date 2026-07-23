@@ -1,7 +1,8 @@
 <div class="container-fluid bg-primary text-white d-none d-lg-flex wow fadeIn" data-wow-delay="0.1s">
     <div class="container py-3">
         <div class="d-flex align-items-center">
-            <a href="{{ route('home') }}">
+            <a href="{{ route('home') }}" class="d-flex align-items-center text-decoration-none">
+                <img src="{{ asset('img/logo.jpeg') }}" alt="Logo Bengkel Asyraf" style="height: 40px; width: 40px; object-fit: cover; border-radius: 5px;" class="me-2">
                 <h2 class="text-white fw-bold m-0">BENGKEL ASYRAF</h2>
             </a>
             <div class="ms-auto d-flex align-items-center">
