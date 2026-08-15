@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>@yield('title', 'Bengkel Asyraf - Jasa Las Talaga Majalengka')</title>
+    <title>@yield('title', 'Bengkel Asyraf - Jasa Las Talaga Bone')</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="bengkel las, jasa las, talaga, majalengka" name="keywords">
-    <meta content="Bengkel Asyraf - Jasa Las Terbaik di Talaga, Majalengka" name="description">
+    <meta content="bengkel las, jasa las, talaga, bone" name="keywords">
+    <meta content="Bengkel Asyraf - Jasa Las Terbaik di Talaga, Bone" name="description">
 
     <!-- Favicon -->
     <link href="{{ asset('img/favicon.ico') }}" rel="icon">

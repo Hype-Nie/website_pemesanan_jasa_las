@@ -124,7 +124,7 @@
     </table>
 
     <div class="footer">
-        Dicetak pada {{ now()->format('d F Y, H:i') }} WIB &bull; Bengkel Asyraf - Jasa Las Talaga, Majalengka
+        Dicetak pada {{ now()->format('d F Y, H:i') }} WIB &bull; Bengkel Asyraf - Jasa Las Talaga, Bone
     </div>
 </body>
 </html>

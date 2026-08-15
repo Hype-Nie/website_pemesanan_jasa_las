@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Bengkel Asyraf - Jasa Las Terbaik di Talaga Majalengka')
+@section('title', 'Bengkel Asyraf - Jasa Las Terbaik di Talaga Bone')
 
 @section('content')
     <!-- Carousel Start -->
@@ -57,8 +57,7 @@
                 </div>
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                     <h1 class="display-6 text-uppercase mb-4">Bengkel Las Profesional & Berkualitas</h1>
-                    <p class="mb-4">Bengkel Asyraf adalah bengkel las terpercaya di Talaga, Majalengka, Jawa Barat.
-                        Kami menyediakan berbagai jasa pengelasan dan pembuatan produk logam custom sesuai kebutuhan Anda.
+                    <p class="mb-4">Bengkel Asyraf adalah bengkel las terpercaya di Talaga, Bone, Sulawesi Selatan. Kami menyediakan berbagai jasa pengelasan dan pembuatan produk logam custom sesuai kebutuhan Anda.
                         Dengan pengalaman bertahun-tahun dan tukang las berpengalaman, kami siap memberikan hasil terbaik.</p>
                     <div class="row g-5 mb-4">
                         <div class="col-sm-6">
@@ -256,7 +255,7 @@
                         </div>
                         <div class="ms-3">
                             <h6 class="text-white text-uppercase">Alamat Bengkel</h6>
-                            <span class="text-white">Talaga, Majalengka, Jawa Barat</span>
+                            <span class="text-white">Talaga, Bone, Sulawesi Selatan</span>
                         </div>
                     </div>
                     <hr class="bg-body">

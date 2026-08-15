@@ -4,7 +4,7 @@
         <div class="row g-5">
             <div class="col-lg-3 col-md-6">
                 <h5 class="text-uppercase text-light mb-4">Bengkel Asyraf</h5>
-                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>Talaga, Majalengka, Jawa Barat</p>
+                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>Talaga, Bone, Sulawesi Selatan</p>
                 <p class="mb-2"><i class="fa fa-phone-alt text-primary me-3"></i>+62 812-XXXX-XXXX</p>
                 <p class="mb-2"><i class="fa fa-envelope text-primary me-3"></i>info@bengkelasyraf.com</p>
                 <div class="d-flex pt-3">
@@ -63,7 +63,7 @@
                 &copy; {{ date('Y') }} <a class="fw-semi-bold" href="{{ route('home') }}">Bengkel Asyraf</a>, Hak Cipta Dilindungi.
             </div>
             <div class="col-md-6 text-center text-md-end">
-                Jasa Las Terbaik di Talaga, Majalengka
+                Jasa Las Terbaik di Talaga, Bone
             </div>
         </div>
     </div>
