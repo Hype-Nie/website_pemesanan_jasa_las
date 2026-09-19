@@ -263,8 +263,8 @@
                 return;
             }
 
-            // Skip link ke admin panel dari frontend
-            if (linkUrl.pathname.startsWith('/admin')) {
+            // Skip link ke admin & employee panel dari frontend
+            if (linkUrl.pathname.startsWith('/admin') || linkUrl.pathname.startsWith('/employee')) {
                 return;
             }
 

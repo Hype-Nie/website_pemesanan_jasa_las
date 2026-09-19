@@ -17,7 +17,7 @@ class Payment extends Model
      */
     protected $fillable = [
         'custom_order_id',
-
+        'payment_type',
         'amount',
         'payment_method',
         'proof_image_path',
@@ -49,5 +49,41 @@ class Payment extends Model
         return $this->belongsTo(CustomOrder::class);
     }
 
+    /**
+     * Check if payment is Down Payment.
+     */
+    public function isDownPayment(): bool
+    {
+        return $this->payment_type === 'down_payment';
+    }
 
+    /**
+     * Check if payment is Full/Final Payment.
+     */
+    public function isFullPayment(): bool
+    {
+        return $this->payment_type === 'full_payment';
+    }
+
+    /**
+     * Get readable label for payment type.
+     */
+    public function typeLabel(): string
+    {
+        return match ($this->payment_type) {
+            'full_payment' => 'Pelunasan',
+            default => 'Uang Muka (DP)',
+        };
+    }
+
+    /**
+     * Get badge color class for payment type.
+     */
+    public function typeBadgeClass(): string
+    {
+        return match ($this->payment_type) {
+            'full_payment' => 'success',
+            default => 'warning text-dark',
+        };
+    }
 }

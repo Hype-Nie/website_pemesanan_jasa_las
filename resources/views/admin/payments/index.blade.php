@@ -15,6 +15,7 @@
                         <tr>
                             <th>Kode Pesanan</th>
                             <th>Pelanggan</th>
+                            <th>Tipe</th>
                             <th>Jumlah</th>
                             <th>Bank</th>
                             <th>Nama Pengirim</th>
@@ -33,6 +34,11 @@
                                     </a>
                                 </td>
                                 <td>{{ $payment->customOrder->user->name ?? '-' }}</td>
+                                <td>
+                                    <span class="badge bg-{{ $payment->typeBadgeClass() }}">
+                                        {{ $payment->typeLabel() }}
+                                    </span>
+                                </td>
                                 <td><strong>Rp {{ number_format($payment->amount, 0, ',', '.') }}</strong></td>
                                 <td>{{ $payment->bank_name }}</td>
                                 <td>{{ $payment->account_name }}</td>
@@ -97,7 +103,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center text-muted py-4">Tidak ada pembayaran ditemukan.</td>
+                                <td colspan="10" class="text-center text-muted py-4">Tidak ada pembayaran ditemukan.</td>
                             </tr>
                         @endforelse
                     </tbody>

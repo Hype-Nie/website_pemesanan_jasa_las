@@ -88,6 +88,78 @@
                                         @endif
                                     </td>
                                 </tr>
+                                @if($order->total_price)
+                                    <tr>
+                                        <th>Ketentuan DP</th>
+                                        <td>
+                                            <span class="fw-bold text-warning">Rp {{ number_format($order->requiredDpAmount(), 0, ',', '.') }}</span>
+                                            <span class="badge bg-{{ $order->isDpPaid() ? 'success' : 'warning text-dark' }} ms-1">
+                                                {{ $order->isDpPaid() ? 'DP Terverifikasi' : 'Belum Lunas DP' }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Terbayar</th>
+                                        <td>
+                                            <span class="fw-bold text-success">Rp {{ number_format($order->totalPaid(), 0, ',', '.') }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Sisa Tagihan</th>
+                                        <td>
+                                            <span class="fw-bold {{ $order->remainingBalance() > 0 ? 'text-danger' : 'text-success' }}">
+                                                Rp {{ number_format($order->remainingBalance(), 0, ',', '.') }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endif
+                                <tr>
+                                    <th>Progres Pengerjaan</th>
+                                    <td>
+                                        @php $wp = $order->workProgress(); @endphp
+                                        <span class="badge bg-{{ $wp->badgeClass() }}">{{ $wp->label() }}</span>
+                                        @if($order->progress_notes)
+                                            <br><small class="text-muted"><strong>Catatan Teknisi:</strong> {{ $order->progress_notes }}</small>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @if($order->progress_photo_path)
+                                    <tr>
+                                        <th>Dokumentasi Fisik</th>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#adminProgressPhotoModal">
+                                                    <img src="{{ asset('storage/' . $order->progress_photo_path) }}" alt="Foto Progres" class="rounded border me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                                </a>
+                                                <div>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#adminProgressPhotoModal">
+                                                        <i class="fas fa-search-plus me-1"></i>Lihat Foto Teknisi
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Modal Dokumentasi Fisik Teknisi -->
+                                            <div class="modal fade" id="adminProgressPhotoModal" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                    <div class="modal-content border-0 shadow-lg">
+                                                        <div class="modal-header bg-dark text-white">
+                                                            <h6 class="modal-title fw-bold"><i class="fas fa-camera text-warning me-2"></i>Dokumentasi Pengerjaan Teknisi</h6>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body text-center p-3 bg-light">
+                                                            <img src="{{ asset('storage/' . $order->progress_photo_path) }}" class="img-fluid rounded shadow" alt="Foto Progres Teknisi">
+                                                            @if($order->progress_notes)
+                                                                <div class="alert alert-light border mt-3 text-start small mb-0">
+                                                                    <strong>Catatan Teknisi:</strong> {{ $order->progress_notes }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endif
                             </table>
                         </div>
                     </div>
@@ -136,6 +208,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Tanggal</th>
+                                    <th>Jenis</th>
                                     <th>Bank</th>
                                     <th>Nama</th>
                                     <th>Jumlah</th>
@@ -147,6 +220,11 @@
                                 @forelse($order->payments ?? [] as $payment)
                                     <tr>
                                         <td>{{ $payment->created_at->format('d M Y, H:i') }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ $payment->typeBadgeClass() }}">
+                                                {{ $payment->typeLabel() }}
+                                            </span>
+                                        </td>
                                         <td>{{ $payment->bank_name }}</td>
                                         <td>{{ $payment->account_name }}</td>
                                         <td>Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
@@ -184,7 +262,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted py-3">Belum ada pembayaran.</td>
+                                        <td colspan="7" class="text-center text-muted py-3">Belum ada pembayaran.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -210,13 +288,22 @@
                             <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
                                 <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Dikonfirmasi</option>
-                                <option value="in_production" {{ $order->status == 'in_production' ? 'selected' : '' }}>Dalam Pengerjaan</option>
-                                <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Selesai</option>
+                                <option value="in_production" {{ $order->status == 'in_production' ? 'selected' : '' }} {{ !$order->isDpPaid() ? 'disabled' : '' }}>
+                                    Dalam Pengerjaan {{ !$order->isDpPaid() ? '(Wajib Lunas DP)' : '' }}
+                                </option>
+                                <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }} {{ (int)$order->progress_percentage < 100 || !$order->isFullyPaid() ? 'disabled' : '' }}>
+                                    Selesai {{ (int)$order->progress_percentage < 100 ? '(Progres Belum 100%)' : (!$order->isFullyPaid() ? '(Belum Lunas 100%)' : '') }}
+                                </option>
                                 <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
                             </select>
                             @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            @if((int)$order->progress_percentage < 100 || !$order->isFullyPaid())
+                                <small class="text-muted d-block mt-1">
+                                    <i class="fas fa-info-circle me-1"></i>Status <strong>Selesai</strong> hanya dapat dipilih jika pengerjaan teknisi telah mencapai 100% dan pembayaran lunas.
+                                </small>
+                            @endif
                         </div>
 
                         <div class="mb-3">
@@ -225,6 +312,18 @@
                                 id="total_price" name="total_price"
                                 value="{{ old('total_price', $order->total_price) }}" min="0">
                             @error('total_price')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="dp_amount" class="form-label fw-bold">Nominal DP Diwajibkan (Rp)</label>
+                            <input type="number" class="form-control @error('dp_amount') is-invalid @enderror"
+                                id="dp_amount" name="dp_amount"
+                                value="{{ old('dp_amount', $order->dp_amount) }}" min="0"
+                                placeholder="Kosongkan untuk otomatis 50% dari total">
+                            <small class="text-muted">Jika dikosongkan, ketentuan DP default adalah 50% (Rp {{ number_format($order->requiredDpAmount(), 0, ',', '.') }}).</small>
+                            @error('dp_amount')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
