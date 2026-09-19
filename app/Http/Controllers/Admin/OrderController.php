@@ -57,13 +57,22 @@ class OrderController extends Controller
             'status' => 'required|string|in:pending,confirmed,in_production,completed,cancelled',
             'admin_notes' => 'nullable|string',
             'total_price' => 'nullable|numeric|min:0',
+            'dp_amount' => 'nullable|numeric|min:0',
         ]);
 
         if ($validated['status'] === 'in_production') {
-            $hasVerifiedPayment = $order->payments()->where('status', 'verified')->exists();
-            
-            if (!$hasVerifiedPayment) {
-                return back()->with('error', 'Status tidak dapat diubah ke "Dalam Pengerjaan" karena belum ada bukti pembayaran yang disetujui.');
+            if (!$order->isDpPaid()) {
+                return back()->with('error', 'Status tidak dapat diubah ke "Dalam Pengerjaan" karena Down Payment (DP) belum dibayar/diverifikasi.');
+            }
+        }
+
+        if ($validated['status'] === 'completed' && $order->status !== 'completed') {
+            if ((int) $order->progress_percentage < 100) {
+                return back()->with('error', 'Status tidak dapat diubah ke "Selesai" karena proses pengerjaan teknisi belum mencapai 100% (saat ini: ' . (int) $order->progress_percentage . '%).');
+            }
+
+            if (!$order->isFullyPaid()) {
+                return back()->with('error', 'Status tidak dapat diubah ke "Selesai" karena sisa pembayaran pesanan belum lunas (100%).');
             }
         }
 
@@ -71,6 +80,7 @@ class OrderController extends Controller
             'status' => $validated['status'],
             'admin_notes' => isset($validated['admin_notes']) ? strip_tags($validated['admin_notes']) : $order->admin_notes,
             'total_price' => $validated['total_price'] ?? $order->total_price,
+            'dp_amount' => array_key_exists('dp_amount', $validated) && $validated['dp_amount'] !== null ? $validated['dp_amount'] : $order->dp_amount,
         ]);
 
         return redirect()

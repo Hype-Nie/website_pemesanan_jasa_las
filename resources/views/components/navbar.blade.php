@@ -16,8 +16,13 @@
                     <a href="{{ route('orders.track') }}" class="nav-item nav-link {{ Request::is('track*') ? 'active' : '' }}">Lacak Pesanan</a>
 
                     @auth
-                        <a href="{{ route('customer.orders.index') }}" class="nav-item nav-link {{ Request::is('customer/orders*') ? 'active' : '' }}">Pesanan Saya</a>
-                        @if(Auth::user()->role === 'admin')
+                        @if(Auth::user()->isCustomer())
+                            <a href="{{ route('customer.orders.index') }}" class="nav-item nav-link {{ Request::is('customer/orders*') ? 'active' : '' }}">Pesanan Saya</a>
+                        @endif
+                        @if(Auth::user()->isEmployee())
+                            <a href="{{ route('employee.dashboard') }}" class="nav-item nav-link {{ Request::is('employee*') ? 'active' : '' }}">Panel Karyawan</a>
+                        @endif
+                        @if(Auth::user()->isAdmin())
                             <a href="{{ route('admin.dashboard') }}" class="nav-item nav-link">Dashboard Admin</a>
                         @endif
                     @endauth
@@ -29,6 +34,9 @@
                         <a href="{{ route('register') }}" class="btn btn-light">Daftar</a>
                     @else
                         <span class="me-3 text-dark"><i class="fa fa-user me-1"></i> {{ Auth::user()->name }}</span>
+                        <a href="{{ route('password.change') }}" class="btn btn-sm btn-outline-secondary me-2" title="Ganti Kata Sandi">
+                            <i class="fas fa-key me-1"></i> Ganti Password
+                        </a>
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-sm btn-outline-danger me-2">Logout</button>
@@ -43,6 +51,7 @@
                         <a href="{{ route('login') }}" class="nav-item nav-link">Masuk</a>
                         <a href="{{ route('register') }}" class="nav-item nav-link">Daftar</a>
                     @else
+                        <a href="{{ route('password.change') }}" class="nav-item nav-link"><i class="fas fa-key me-1"></i> Ganti Kata Sandi</a>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="nav-item nav-link btn btn-link text-start p-0 ps-2 pb-2">Logout</button>

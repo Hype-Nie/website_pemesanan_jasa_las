@@ -33,6 +33,10 @@ class LoginController extends Controller
                 return redirect()->intended(route('admin.dashboard'));
             }
 
+            if (Auth::user()->isEmployee()) {
+                return redirect()->intended(route('employee.dashboard'));
+            }
+
             return redirect()->intended(route('customer.orders.index'));
         }
 

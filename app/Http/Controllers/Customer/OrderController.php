@@ -41,10 +41,12 @@ class OrderController extends Controller
     }
 
     /**
-     * Validate and store a new custom order.
+     * Validate and store a new order (custom or from catalog).
      */
     public function store(Request $request)
     {
+        $isCatalogOrder = $request->filled('catalog_product_id');
+
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -52,8 +54,13 @@ class OrderController extends Controller
             'material_preference' => 'nullable|string|max:100',
             'quantity' => 'required|integer|min:1',
             'catalog_product_id' => 'nullable|exists:catalog_products,id',
-            'reference_design' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'reference_design' => ($isCatalogOrder ? 'nullable' : 'required') . '|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
+
+        $catalogProduct = null;
+        if ($isCatalogOrder) {
+            $catalogProduct = CatalogProduct::active()->find($validated['catalog_product_id']);
+        }
 
         $data = [
             'user_id' => Auth::id(),
@@ -61,13 +68,24 @@ class OrderController extends Controller
             'description' => strip_tags($validated['description']),
             'dimensions' => strip_tags($validated['dimensions']),
             'material_preference' => isset($validated['material_preference']) ? strip_tags($validated['material_preference']) : null,
-            'quantity' => $validated['quantity'],
+            'quantity' => (int) $validated['quantity'],
             'catalog_product_id' => $validated['catalog_product_id'] ?? null,
         ];
+
+        if ($catalogProduct && (float) $catalogProduct->price_estimate > 0) {
+            $totalPrice = (float) $catalogProduct->price_estimate * (int) $validated['quantity'];
+            $data['total_price'] = $totalPrice;
+            $data['dp_amount'] = round($totalPrice * 0.5, 2);
+            $data['status'] = 'confirmed';
+        } else {
+            $data['status'] = 'pending';
+        }
 
         if ($request->hasFile('reference_design')) {
             $data['reference_design_path'] = $request->file('reference_design')
                 ->store('order-designs', 'public');
+        } elseif ($catalogProduct && $catalogProduct->image_path) {
+            $data['reference_design_path'] = $catalogProduct->image_path;
         }
 
         $order = CustomOrder::create($data);
