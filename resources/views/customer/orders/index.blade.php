@@ -37,8 +37,15 @@
                                 <small class="text-muted">{{ $order->created_at->format('d M Y') }}</small>
                             </div>
                             <div class="col-md-3">
-                                <h6 class="mb-0">{{ $order->product_name }}</h6>
-                                <small class="text-muted">Qty: {{ $order->quantity }}</small>
+                                <div class="d-flex align-items-center mb-1">
+                                    <h6 class="mb-0 me-2">{{ $order->product_name }}</h6>
+                                    @if($order->catalog_product_id)
+                                        <span class="badge bg-info text-dark" style="font-size: 0.68rem;">Katalog</span>
+                                    @else
+                                        <span class="badge bg-secondary" style="font-size: 0.68rem;">Custom</span>
+                                    @endif
+                                </div>
+                                <small class="text-muted">Qty: {{ $order->quantity }} unit</small>
                             </div>
                             <div class="col-md-2">
                                 @php

@@ -59,6 +59,19 @@
                         <div class="col-md-6">
                             <table class="table table-borderless">
                                 <tr>
+                                    <th>Tipe Pesanan</th>
+                                    <td>
+                                        @if($order->catalog_product_id && $order->catalogProduct)
+                                            <span class="badge bg-info text-dark"><i class="fas fa-book-open me-1"></i>Produk Katalog</span>
+                                            <a href="{{ route('catalog.show', $order->catalog_product_id) }}" target="_blank" class="small ms-2">
+                                                <i class="fas fa-external-link-alt me-1"></i>Lihat Katalog
+                                            </a>
+                                        @else
+                                            <span class="badge bg-secondary"><i class="fas fa-magic me-1"></i>Pesanan Custom</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th>Nama Produk</th>
                                     <td>{{ $order->product_name }}</td>
                                 </tr>
@@ -76,13 +89,22 @@
                                 </tr>
                                 <tr>
                                     <th>Jumlah</th>
-                                    <td>{{ $order->quantity }}</td>
+                                    <td>{{ $order->quantity }} unit</td>
                                 </tr>
+                                @if($order->catalog_product_id && $order->catalogProduct)
+                                    <tr>
+                                        <th>Harga Satuan Katalog</th>
+                                        <td>Rp {{ number_format($order->catalogProduct->price_estimate, 0, ',', '.') }}</td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <th>Total Harga</th>
                                     <td>
                                         @if($order->total_price)
                                             <span class="fw-bold text-primary fs-5">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                                            @if($order->catalog_product_id && $order->catalogProduct)
+                                                <small class="text-success ms-2"><i class="fas fa-check-circle me-1"></i>Sesuai Katalog</small>
+                                            @endif
                                         @else
                                             <span class="text-muted">Belum ditetapkan</span>
                                         @endif

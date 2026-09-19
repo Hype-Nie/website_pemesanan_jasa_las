@@ -59,7 +59,17 @@
                                     {{ $order->user->name ?? '-' }}
                                     <br><small class="text-muted">{{ $order->user->phone ?? '' }}</small>
                                 </td>
-                                <td>{{ $order->product_name }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center mb-1">
+                                        <span class="fw-bold me-2">{{ $order->product_name }}</span>
+                                        @if($order->catalog_product_id)
+                                            <span class="badge bg-info text-dark" style="font-size: 0.68rem;">Katalog</span>
+                                        @else
+                                            <span class="badge bg-secondary" style="font-size: 0.68rem;">Custom</span>
+                                        @endif
+                                    </div>
+                                    <small class="text-muted">Qty: {{ $order->quantity }} unit</small>
+                                </td>
                                 <td>
                                     @php
                                         $statusColors = [

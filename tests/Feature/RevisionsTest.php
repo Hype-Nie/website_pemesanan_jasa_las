@@ -587,4 +587,88 @@ class RevisionsTest extends BlackboxTestCase
         $response->assertSee('progress-photos/track_item.jpg');
         $response->assertSee('Perakitan plat dan finishing las.');
     }
+
+    /**
+     * Test: Catalog product order locks price, confirms order, and allows immediate DP payment.
+     */
+    public function test_catalog_order_locks_price_and_enables_immediate_dp_payment(): void
+    {
+        $this->fakePublicDisk();
+        $customer = $this->customer();
+        $product = $this->product([
+            'name' => 'Kanopi Baja Ringan',
+            'price_estimate' => 1200000,
+            'image_path' => 'catalog/kanopi.jpg',
+            'material' => 'Baja Ringan 0.75mm',
+            'description' => 'Kanopi berkualitas tinggi tahan cuaca.',
+        ]);
+
+        // Place order from catalog without uploading new design
+        $response = $this->actingAs($customer)->post(route('customer.orders.store'), [
+            'product_name' => 'Kanopi Baja Ringan',
+            'description' => 'Kanopi berkualitas tinggi tahan cuaca.',
+            'dimensions' => '4m x 3m',
+            'material_preference' => 'Baja Ringan 0.75mm',
+            'quantity' => 2,
+            'catalog_product_id' => $product->id,
+        ]);
+
+        $order = $customer->customOrders()->latest()->first();
+        $response->assertRedirect(route('customer.orders.show', $order->id));
+
+        $this->assertEquals(2400000.00, (float) $order->total_price);
+        $this->assertEquals(1200000.00, (float) $order->dp_amount);
+        $this->assertEquals('confirmed', $order->status);
+        $this->assertEquals('catalog/kanopi.jpg', $order->reference_design_path);
+
+        // Customer views order detail
+        $showResponse = $this->actingAs($customer)->get(route('customer.orders.show', $order->id));
+        $showResponse->assertOk();
+        $showResponse->assertSee('Produk Katalog');
+        $showResponse->assertSee('Rp 2.400.000');
+        $showResponse->assertSee('Bayar Down Payment (DP) Rp 1.200.000');
+        $showResponse->assertDontSee('Menunggu konfirmasi admin');
+
+        // Customer can immediately access payment form for DP
+        $payResponse = $this->actingAs($customer)->get(route('customer.payments.create', $order->id));
+        $payResponse->assertOk();
+        $payResponse->assertSee('1.200.000');
+    }
+
+    /**
+     * Test: Pure custom order has null price, pending status, and prevents payment until priced.
+     */
+    public function test_custom_order_without_catalog_product_requires_admin_pricing(): void
+    {
+        $this->fakePublicDisk();
+        $customer = $this->customer();
+
+        // Place pure custom order
+        $response = $this->actingAs($customer)->post(route('customer.orders.store'), [
+            'product_name' => 'Meja Las Khusus',
+            'description' => 'Meja las heavy duty dengan plat 10mm.',
+            'dimensions' => '2m x 1m x 0.8m',
+            'material_preference' => 'Baja Plat Tebal',
+            'quantity' => 1,
+            'reference_design' => UploadedFile::fake()->create('custom_table.jpg', 64, 'image/jpeg'),
+        ]);
+
+        $order = $customer->customOrders()->latest()->first();
+        $response->assertRedirect(route('customer.orders.show', $order->id));
+
+        $this->assertNull($order->total_price);
+        $this->assertEquals('pending', $order->status);
+
+        // Customer views order detail
+        $showResponse = $this->actingAs($customer)->get(route('customer.orders.show', $order->id));
+        $showResponse->assertOk();
+        $showResponse->assertSee('Pesanan Custom');
+        $showResponse->assertSee('Menunggu konfirmasi dan penetapan harga dari admin');
+        $showResponse->assertDontSee('Bayar Down Payment (DP)');
+
+        // Customer cannot access payment form before pricing
+        $payResponse = $this->actingAs($customer)->get(route('customer.payments.create', $order->id));
+        $payResponse->assertRedirect(route('customer.orders.show', $order->id));
+        $payResponse->assertSessionHas('error');
+    }
 }

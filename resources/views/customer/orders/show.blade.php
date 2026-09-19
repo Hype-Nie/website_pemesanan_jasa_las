@@ -23,8 +23,26 @@
                                     <td><span class="fw-bold text-primary">{{ $order->order_code }}</span></td>
                                 </tr>
                                 <tr>
+                                    <th>Tipe Pesanan</th>
+                                    <td>
+                                        @if($order->catalog_product_id && $order->catalogProduct)
+                                            <span class="badge bg-info text-dark"><i class="fas fa-book-open me-1"></i>Produk Katalog</span>
+                                            <a href="{{ route('catalog.show', $order->catalog_product_id) }}" class="small ms-2 text-decoration-none">
+                                                <i class="fas fa-external-link-alt me-1"></i>Lihat Produk di Katalog
+                                            </a>
+                                        @else
+                                            <span class="badge bg-secondary"><i class="fas fa-magic me-1"></i>Pesanan Custom</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th>Nama Produk</th>
-                                    <td>{{ $order->product_name }}</td>
+                                    <td>
+                                        <span class="fw-bold text-dark">{{ $order->product_name }}</span>
+                                        @if($order->catalog_product_id && $order->catalogProduct)
+                                            <span class="badge bg-light text-muted border ms-2">Kategori: {{ $order->catalogProduct->category->name ?? 'Katalog' }}</span>
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Deskripsi</th>
@@ -40,15 +58,24 @@
                                 </tr>
                                 <tr>
                                     <th>Jumlah</th>
-                                    <td>{{ $order->quantity }}</td>
+                                    <td>{{ $order->quantity }} unit</td>
                                 </tr>
+                                @if($order->catalog_product_id && $order->catalogProduct)
+                                    <tr>
+                                        <th>Harga Satuan</th>
+                                        <td>Rp {{ number_format($order->catalogProduct->price_estimate, 0, ',', '.') }}</td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <th>Total Harga</th>
                                     <td>
                                         @if($order->total_price)
                                             <span class="fs-5 fw-bold text-primary">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                                            @if($order->catalog_product_id && $order->catalogProduct)
+                                                <small class="text-success ms-2"><i class="fas fa-check-circle me-1"></i>Harga Pasti Katalog ({{ $order->quantity }} × Rp {{ number_format($order->catalogProduct->price_estimate, 0, ',', '.') }})</small>
+                                            @endif
                                         @else
-                                            <span class="text-muted">Menunggu konfirmasi admin</span>
+                                            <span class="text-muted"><i class="fas fa-hourglass-half me-1"></i>Menunggu konfirmasi dan penetapan harga dari admin</span>
                                         @endif
                                     </td>
                                 </tr>

@@ -51,7 +51,6 @@ class CustomerOrderTest extends BlackboxTestCase
     {
         $this->fakePublicDisk();
         $customer = $this->customer();
-        $product = $this->product(['name' => 'Produk Katalog']);
 
         $response = $this->actingAs($customer)->post(route('customer.orders.store'), [
             'product_name' => 'Pagar Custom',
@@ -59,7 +58,7 @@ class CustomerOrderTest extends BlackboxTestCase
             'dimensions' => '3m x 1.5m',
             'material_preference' => 'Besi Hollow',
             'quantity' => 2,
-            'catalog_product_id' => $product->id,
+            'catalog_product_id' => null,
             'reference_design' => UploadedFile::fake()->create('referensi.jpg', 64, 'image/jpeg'),
         ]);
 
@@ -69,12 +68,48 @@ class CustomerOrderTest extends BlackboxTestCase
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('custom_orders', [
             'user_id' => $customer->id,
-            'catalog_product_id' => $product->id,
+            'catalog_product_id' => null,
             'product_name' => 'Pagar Custom',
             'quantity' => 2,
             'status' => 'pending',
+            'total_price' => null,
         ]);
         Storage::disk('public')->assertExists($order->reference_design_path);
+    }
+
+    public function test_customer_can_create_catalog_product_order_with_locked_price_and_confirmed_status(): void
+    {
+        $this->fakePublicDisk();
+        $customer = $this->customer();
+        $product = $this->product([
+            'name' => 'Pagar Katalog',
+            'price_estimate' => 850000,
+            'image_path' => 'catalog/pagar.jpg',
+        ]);
+
+        $response = $this->actingAs($customer)->post(route('customer.orders.store'), [
+            'product_name' => 'Pagar Katalog',
+            'description' => 'Pemesanan dari katalog.',
+            'dimensions' => 'Standar',
+            'material_preference' => 'Besi Hollow',
+            'quantity' => 2,
+            'catalog_product_id' => $product->id,
+        ]);
+
+        $order = $customer->customOrders()->latest()->first();
+
+        $response->assertRedirect(route('customer.orders.show', $order->id));
+        $response->assertSessionHas('success');
+        $this->assertDatabaseHas('custom_orders', [
+            'user_id' => $customer->id,
+            'catalog_product_id' => $product->id,
+            'product_name' => 'Pagar Katalog',
+            'quantity' => 2,
+            'total_price' => 1700000.00,
+            'dp_amount' => 850000.00,
+            'status' => 'confirmed',
+            'reference_design_path' => 'catalog/pagar.jpg',
+        ]);
     }
 
     public function test_order_creation_validation_rejects_missing_invalid_and_unknown_catalog_data(): void
