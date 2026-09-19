@@ -87,6 +87,23 @@
                                                         @endif
                                                     </td>
                                                 </tr>
+                                                @if($order->total_price)
+                                                    <tr>
+                                                        <th>Pembayaran</th>
+                                                        <td>
+                                                            @if($order->isFullyPaid())
+                                                                <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Lunas (100%)</span>
+                                                            @elseif($order->isDpPaid())
+                                                                <span class="badge bg-info text-dark"><i class="fas fa-shield-alt me-1"></i>DP Terverifikasi</span>
+                                                                <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                                                                    <i class="fas fa-info-circle text-primary me-1"></i>Pelunasan sisa tagihan wajib diselesaikan sebelum admin mengubah status ke "Selesai".
+                                                                </small>
+                                                            @else
+                                                                <span class="badge bg-warning text-dark">Menunggu Pembayaran DP</span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endif
                                             </table>
                                         </div>
                                     </div>
@@ -99,6 +116,73 @@
                                     <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Progress Pesanan</h5>
                                 </div>
                                 <div class="card-body p-4">
+                                    @if(in_array($order->status, ['in_production', 'completed']))
+                                        @php
+                                            $wp = $order->workProgress();
+                                        @endphp
+                                        <div class="bg-light rounded p-4 mb-4 border">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="fw-bold text-dark"><i class="fas fa-hard-hat text-warning me-2"></i>Progres Fisik: {{ $wp->stepName() }}</span>
+                                                <span class="badge bg-primary fs-6">{{ $order->progress_percentage }}%</span>
+                                            </div>
+                                            <div class="progress mb-2" style="height: 12px;">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-{{ $wp->badgeClass() }}"
+                                                    role="progressbar"
+                                                    style="width: {{ $order->progress_percentage }}%;"
+                                                    aria-valuenow="{{ $order->progress_percentage }}"
+                                                    aria-valuemin="0"
+                                                    aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                            <small class="text-muted d-block">{{ $wp->label() }}</small>
+                                            @if($order->progress_notes)
+                                                <div class="alert alert-white bg-white border mt-3 mb-0 py-2 px-3 small">
+                                                    <strong>Catatan Pengerjaan Bengkel:</strong><br>{{ $order->progress_notes }}
+                                                </div>
+                                            @endif
+
+                                            @if($order->progress_photo_path)
+                                                <div class="mt-3 pt-3 border-top">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span class="small fw-bold text-dark"><i class="fas fa-camera text-primary me-1"></i>Foto Dokumentasi Fisik Bengkel:</span>
+                                                        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2" data-bs-toggle="modal" data-bs-target="#trackProgressPhotoModal">
+                                                            <i class="fas fa-expand me-1"></i>Perbesar
+                                                        </button>
+                                                    </div>
+                                                    <div class="text-center bg-white p-2 rounded border">
+                                                        <a href="#" data-bs-toggle="modal" data-bs-target="#trackProgressPhotoModal">
+                                                            <img src="{{ asset('storage/' . $order->progress_photo_path) }}"
+                                                                 alt="Foto Dokumentasi Pengerjaan"
+                                                                 class="img-fluid rounded shadow-sm"
+                                                                 style="max-height: 220px; object-fit: contain;">
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Track Progress Photo Modal -->
+                                                <div class="modal fade" id="trackProgressPhotoModal" tabindex="-1" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                        <div class="modal-content border-0 shadow-lg">
+                                                            <div class="modal-header bg-dark text-white">
+                                                                <h6 class="modal-title fw-bold">
+                                                                    <i class="fas fa-camera text-warning me-2"></i>Foto Dokumentasi Pengerjaan - {{ $order->order_code }}
+                                                                </h6>
+                                                                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-center p-3 bg-light">
+                                                                <img src="{{ asset('storage/' . $order->progress_photo_path) }}" class="img-fluid rounded shadow" alt="Dokumentasi Pengerjaan">
+                                                                @if($order->progress_notes)
+                                                                    <div class="text-muted mt-3 mb-0 small text-start bg-white p-3 rounded border">
+                                                                        <strong>Catatan Teknisi:</strong><br>{{ $order->progress_notes }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
                                     @php
                                         $statuses = ['pending', 'confirmed', 'in_production', 'completed'];
                                         $statusInfo = [

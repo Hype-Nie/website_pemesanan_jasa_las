@@ -27,6 +27,16 @@ class DatabaseSeeder extends Seeder
             'address' => 'Jl. Raya Talaga No. 45, Majalengka, Jawa Barat',
         ]);
 
+        // Employee user (Teknisi / Tukang Las)
+        User::create([
+            'name' => 'Ahmad Teknisi',
+            'email' => 'karyawan@bengkelasyraf.com',
+            'password' => Hash::make('password'),
+            'role' => 'employee',
+            'phone' => '081345678901',
+            'address' => 'Talaga, Bone, Sulawesi Selatan',
+        ]);
+
         // Sample customers
         User::create([
             'name' => 'Budi Santoso',

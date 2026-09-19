@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -23,20 +24,34 @@ class PaymentController extends Controller
     }
 
     /**
-     * Mark payment as verified.
+     * Mark payment as verified and update order status accordingly.
      */
     public function verify(string $id)
     {
-        $payment = Payment::findOrFail($id);
+        $payment = Payment::with('customOrder')->findOrFail($id);
 
-        $payment->update([
-            'status' => 'verified',
-            'verified_at' => Carbon::now(),
-        ]);
+        DB::transaction(function () use ($payment) {
+            $payment->update([
+                'status' => 'verified',
+                'verified_at' => Carbon::now(),
+            ]);
+
+            $order = $payment->customOrder;
+            if ($order) {
+                // If Down Payment verified and order was confirmed, auto transition to in_production
+                if ($payment->isDownPayment() && $order->status === 'confirmed') {
+                    $order->update([
+                        'status' => 'in_production',
+                    ]);
+                }
+            }
+        });
+
+        $typeLabel = $payment->isDownPayment() ? 'Down Payment (DP)' : 'Pelunasan';
 
         return redirect()
             ->route('admin.payments.index')
-            ->with('success', 'Pembayaran berhasil diverifikasi.');
+            ->with('success', "Pembayaran {$typeLabel} untuk pesanan {$payment->customOrder->order_code} berhasil diverifikasi.");
     }
 
     /**
@@ -44,7 +59,7 @@ class PaymentController extends Controller
      */
     public function reject(Request $request, string $id)
     {
-        $payment = Payment::findOrFail($id);
+        $payment = Payment::with('customOrder')->findOrFail($id);
 
         $validated = $request->validate([
             'admin_notes' => 'required|string|max:500',

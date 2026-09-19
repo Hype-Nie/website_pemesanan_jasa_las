@@ -60,6 +60,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if the user has employee role.
+     */
+    public function isEmployee(): bool
+    {
+        return $this->role === 'employee';
+    }
+
+    /**
+     * Check if the user is staff (admin or employee).
+     */
+    public function isStaff(): bool
+    {
+        return in_array($this->role, ['admin', 'employee']);
+    }
+
+    /**
+     * Check if the user is a customer.
+     */
+    public function isCustomer(): bool
+    {
+        return $this->role === 'customer';
+    }
+
+    /**
      * Get the custom orders for the user.
      */
     public function customOrders(): HasMany

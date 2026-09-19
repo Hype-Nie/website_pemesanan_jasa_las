@@ -7,6 +7,9 @@
     </div>
     <div class="d-flex align-items-center">
         <span class="me-3 text-muted"><i class="fas fa-user-shield me-1"></i> {{ Auth::user()->name ?? 'Admin' }}</span>
+        <a href="{{ route('password.change') }}" class="btn btn-sm btn-outline-secondary me-2">
+            <i class="fas fa-key me-1"></i> Ganti Password
+        </a>
         <form action="{{ route('logout') }}" method="POST" class="d-inline">
             @csrf
             <button type="submit" class="btn btn-sm btn-outline-danger">
